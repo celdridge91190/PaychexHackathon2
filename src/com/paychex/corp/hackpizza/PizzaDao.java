@@ -209,7 +209,33 @@ public class PizzaDao {
 	}
 	
 	public void addToppingToPizza(Connection conn, String toppingName, String pizzaName) throws SQLException {
-		
+		String getIdsSql = "Select topping.topping_id, pizza.pizza_id from Hack2.pizza pizza, "
+				+ "Hack2.topping topping where pizza.pizza_name = ? and Hack2.topping_name = ?";
+		String insertMappingSql = "Insert into Hack2.pizzaToppingMap (pizza_id, topping_id) value(?, ?)";
+		PreparedStatement getIdsStatement = null;
+		PreparedStatement insertMappingStatement = null;
+		try {
+			int pizzaId = 0;
+			int toppingId = 0;
+			getIdsStatement = conn.prepareStatement(getIdsSql);
+			getIdsStatement.setMaxRows(1);
+			ResultSet results = getIdsStatement.executeQuery();
+			if (results.next()){
+				pizzaId = results.getInt("PIZZA_ID");
+				toppingId = results.getInt("TOPPING_ID");
+			}
+			insertMappingStatement = conn.prepareStatement(insertMappingSql);
+			insertMappingStatement.setInt(1, pizzaId);
+			insertMappingStatement.setInt(2, toppingId);
+			insertMappingStatement.execute();
+		} finally {
+			if (getIdsStatement != null & !getIdsStatement.isClosed()){
+				getIdsStatement.close();
+			}
+			if (insertMappingStatement != null & !insertMappingStatement.isClosed()){
+				insertMappingStatement.close();
+			}
+		}
 	}
 	
 	
