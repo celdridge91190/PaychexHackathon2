@@ -209,30 +209,38 @@ public class PizzaDao {
 	}
 	
 	public void addToppingToPizza(Connection conn, String toppingName, String pizzaName) throws SQLException {
-		String getIdsSql = "Select topping.topping_id, pizza.pizza_id from Hack2.pizza pizza, "
-				+ "Hack2.topping topping where pizza.pizza_name = ? and Hack2.topping_name = ?";
+		String toppingIdSql = "Select topping_id from Hack2.topping where topping_name = ?";
+		String pizzaIdSql = "Select pizza_id from Hack2.pizza where pizza_name = ?";
 		String insertMappingSql = "Insert into Hack2.pizzaToppingMap (pizza_id, topping_id) value(?, ?)";
-		PreparedStatement getIdsStatement = null;
+		PreparedStatement pizzaIdStatement = null;
+		PreparedStatement toppingIdStatement = null;
 		PreparedStatement insertMappingStatement = null;
 		try {
 			int pizzaId = 0;
 			int toppingId = 0;
-			getIdsStatement = conn.prepareStatement(getIdsSql);
-			getIdsStatement.setString(1,  pizzaName);
-			getIdsStatement.setString(2,  toppingName);
-			getIdsStatement.setMaxRows(1);
-			ResultSet results = getIdsStatement.executeQuery();
+			pizzaIdStatement = conn.prepareStatement(pizzaIdSql);
+			pizzaIdStatement.setString(1,  pizzaName);
+			pizzaIdStatement.setMaxRows(1);
+			ResultSet results = pizzaIdStatement.executeQuery();
 			if (results.next()){
 				pizzaId = results.getInt("PIZZA_ID");
-				toppingId = results.getInt("TOPPING_ID");
 			}
+			
+			toppingIdStatement = conn.prepareStatement(toppingIdSql);
+			toppingIdStatement.setString(1, toppingName);
+			toppingIdStatement.setMaxRows(1);
+			ResultSet toppingResults = toppingIdStatement.executeQuery();
+			if (toppingResults.next()){
+				toppingId = toppingResults.getInt("TOPPING_ID");
+			}
+			
 			insertMappingStatement = conn.prepareStatement(insertMappingSql);
 			insertMappingStatement.setInt(1, pizzaId);
 			insertMappingStatement.setInt(2, toppingId);
 			insertMappingStatement.execute();
 		} finally {
-			if (getIdsStatement != null & !getIdsStatement.isClosed()){
-				getIdsStatement.close();
+			if (pizzaIdStatement != null & !pizzaIdStatement.isClosed()){
+				pizzaIdStatement.close();
 			}
 			if (insertMappingStatement != null & !insertMappingStatement.isClosed()){
 				insertMappingStatement.close();
