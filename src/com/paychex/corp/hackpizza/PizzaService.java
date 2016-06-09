@@ -85,8 +85,54 @@ public class PizzaService {
 			ctx = new InitialContext();
 			DataSource ds = (DataSource) ctx.lookup("jdbc/HackPizza");
 			conn = ds.getConnection();
-			// Insert pizza object to database
+			// Insert new pizza to database
 			pizzaDao.addPizza(conn, pizzaName);
+			
+		} finally {
+			if (conn != null && !conn.isClosed()){
+				conn.close();
+			}
+		}
+		
+	}
+	
+	@POST
+	@Path("/createTopping/{toppingName}")
+	// @Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void createTopping(@PathParam("toppingName") String toppingName) throws Exception {
+		InitialContext ctx;
+		Connection conn = null;
+		
+		try {
+			ctx = new InitialContext();
+			DataSource ds = (DataSource) ctx.lookup("jdbc/HackPizza");
+			conn = ds.getConnection();
+			// Insert new topping to database
+			pizzaDao.addTopping(conn, toppingName);
+			
+		} finally {
+			if (conn != null && !conn.isClosed()){
+				conn.close();
+			}
+		}
+		
+	}
+	
+	@POST
+	@Path("/addPizzaTopping/{toppingName}/{pizzaName}")
+	// @Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void addPizzaTopping(@PathParam("toppingName") String toppingName, @PathParam("pizzaName") String pizzaName) throws Exception {
+		InitialContext ctx;
+		Connection conn = null;
+		
+		try {
+			ctx = new InitialContext();
+			DataSource ds = (DataSource) ctx.lookup("jdbc/HackPizza");
+			conn = ds.getConnection();
+			// Assign additional topping to existing pizza in database
+			pizzaDao.addToppingToPizza(conn, toppingName, pizzaName);
 			
 		} finally {
 			if (conn != null && !conn.isClosed()){
