@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Pizza implements Serializable {
 	private int pizza_id;
 	private String pizza_name;
-	private List<Toppings> toppings = new ArrayList<Toppings>();
+	private List<Topping> toppings = new ArrayList<Topping>();
 	
 	public Pizza() {
 		
@@ -49,13 +49,13 @@ public class Pizza implements Serializable {
 	/**
 	 * @param toppings the toppings to set
 	 */
-	public void setToppings(List<Toppings> toppings) {
+	public void setToppings(List<Topping> toppings) {
 		this.toppings = toppings;
 	}
 	/**
 	 * @return the toppings
 	 */
-	public List<Toppings> getToppings() {
+	public List<Topping> getToppings() {
 		return toppings;
 	}
 }

@@ -45,8 +45,8 @@ public class PizzaDao {
 	 * @return List of all toppings in Hack2.topping
 	 * @throws SQLException
 	 */
-	public List<Toppings> getAllToppings(Connection conn) throws SQLException {
-		List<Toppings> toppings = new ArrayList<Toppings>();
+	public List<Topping> getAllToppings(Connection conn) throws SQLException {
+		List<Topping> toppings = new ArrayList<Topping>();
 
 		String getAllToppingsSql = "SELECT topping_id, topping_name from Hack2.topping";
 		PreparedStatement getAllToppingsStatement = null;
@@ -55,7 +55,7 @@ public class PizzaDao {
 	
 			ResultSet results = getAllToppingsStatement.executeQuery();
 			while (results.next()) {
-				Toppings topping = new Toppings();
+				Topping topping = new Topping();
 				topping.setTopping_id(results.getInt("TOPPING_ID"));
 				topping.setTopping_name(results.getString("TOPPING_NAME"));
 			}
@@ -74,8 +74,8 @@ public class PizzaDao {
 	 * @return All toppings for the Pizza passed in
 	 * @throws SQLException
 	 */
-	public List<Toppings> getToppingsForPizza(Connection conn, Pizza pizza) throws SQLException {
-		List<Toppings> toppings = new ArrayList<Toppings>();
+	public List<Topping> getToppingsForPizza(Connection conn, Pizza pizza) throws SQLException {
+		List<Topping> toppings = new ArrayList<Topping>();
 		String toppingsForPizzaSql = "select topping.topping_id, topping.topping_name "
 				+ "from Hack2.topping topping join Hack2.pizzaToppingMap ptMap "
 				+ "on (ptMap.topping_id = topping.topping_id) join Hack2.pizza pizza "
@@ -86,9 +86,10 @@ public class PizzaDao {
 			toppingsForPizzaStatement.setInt(1, pizza.getPizza_id());
 			ResultSet results = toppingsForPizzaStatement.executeQuery();
 			while (results.next()){
-				Toppings topping = new Toppings();
+				Topping topping = new Topping();
 				topping.setTopping_id(results.getInt("TOPPING_ID"));
 				topping.setTopping_name(results.getString("TOPPING_NAME"));
+				toppings.add(topping);
 			}
 		} finally {
 			if (toppingsForPizzaStatement != null && !toppingsForPizzaStatement.isClosed()){
@@ -96,6 +97,60 @@ public class PizzaDao {
 			}
 		}
 		return toppings;
+	}
+	
+	/**
+	 * Get a specific pizza from the database based on name
+	 * @param conn connection to the database
+	 * @param pizzaName pizza name to find
+	 * @return pizza from the database
+	 * @throws SQLException
+	 */
+	public Pizza getPizza(Connection conn, String pizzaName) throws SQLException {
+		Pizza pizza = new Pizza();
+		String pizzaSql = "Select pizza_id, pizza_name from Hack2.pizza where pizza_name = ?";
+		PreparedStatement pizzaStatement = null;
+		try {
+			pizzaStatement = conn.prepareStatement(pizzaSql);
+
+			pizzaStatement.setString(1, pizzaName);
+			pizzaStatement.setMaxRows(1);
+			ResultSet results = pizzaStatement.executeQuery();
+			if (results.next()) {
+				pizza.setPizza_id(results.getInt("PIZZA_ID"));
+				pizza.setPizza_name(results.getString("PIZZA_NAME"));
+			}
+		} finally {
+			if (pizzaStatement != null & !pizzaStatement.isClosed()){
+				pizzaStatement.close();
+			}
+		}
+		return pizza;
+	}
+	
+	/**
+	 * Get all pizza names from pizza table
+	 * @param conn connection to the database
+	 * @return all pizza names in pizza table
+	 * @throws SQLException
+	 */
+	public List<String> getPizzaNames(Connection conn) throws SQLException {
+		List<String> pizzaNames = new ArrayList<String>();
+		String pizzaNamesSql = "Select pizza_name from Hack2.pizza";
+		PreparedStatement pizzaNameStatement = null;
+		try {
+			pizzaNameStatement = conn.prepareStatement(pizzaNamesSql);
+			ResultSet results = pizzaNameStatement.executeQuery();
+			while (results.next()){
+				String pizzaName = results.getString("PIZZA_NAME");
+				pizzaNames.add(pizzaName);
+			}
+		} finally {
+			if (pizzaNameStatement != null && !pizzaNameStatement.isClosed()){
+				pizzaNameStatement.close();
+			}
+		}
+		return pizzaNames;
 	}
 	
 	/**
