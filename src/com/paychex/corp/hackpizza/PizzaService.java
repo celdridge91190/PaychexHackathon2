@@ -1,15 +1,10 @@
 package com.paychex.corp.hackpizza;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.Query;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,28 +17,32 @@ public class PizzaService {
 
 	@GET
 	@Path("/pizza")
-	//@Produces(MediaType.APPLICATION_XML)
+	// @Produces(MediaType.APPLICATION_XML)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Pizza> getPizzas() throws Exception {
 		InitialContext ctx;
+		Connection conn = null;
 		List<Pizza> pizzas = new ArrayList<Pizza>();
 		try {
 			ctx = new InitialContext();
-			DataSource ds = (DataSource)ctx.lookup("jdbc/HackPizza");
-			Connection conn = ds.getConnection();
-			String getAllPizzasSql = "Select pizza_id, pizza_name from Hack2.pizza";
-			PreparedStatement getAllPizzasStatement = conn.prepareStatement(getAllPizzasSql);
-			ResultSet results = getAllPizzasStatement.executeQuery();
-			while (results.next()){
-				Pizza pizza = new Pizza();
-				pizza.setPizza_id(results.getString("PIZZA_ID"));
-				pizza.setPizza_name(results.getString("PIZZA_NAME"));
+			DataSource ds = (DataSource) ctx.lookup("jdbc/HackPizza");
+			conn = ds.getConnection();
+			// Retrieve all pizza objects from database
+			List<Pizza> allPizzas = pizzaDao.getAllPizzas(conn);
+			// For each pizza, find the toppings that belong to that pizza and add them to the
+			// pojo
+			for (Pizza pizza : allPizzas){
+				List<Toppings> toppings = pizzaDao.getToppingsForPizza(conn, pizza);
+				pizza.getToppings().addAll(toppings);
+				pizzas.add(pizza);
 			}
 			
-		} catch (Exception e) {
-			throw e;
+		} finally {
+			if (conn != null && !conn.isClosed()){
+				conn.close();
+			}
 		}
-		
+
 		return pizzas;
 	}
 

@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Pizza")
 public class Pizza implements Serializable {
-	private String pizza_id;
+	private int pizza_id;
 	private String pizza_name;
 	private List<Toppings> toppings = new ArrayList<Toppings>();
 	
@@ -21,13 +21,13 @@ public class Pizza implements Serializable {
 	/**
 	 * @param pizza_id the pizza_id to set
 	 */
-	public void setPizza_id(String pizza_id) {
+	public void setPizza_id(int pizza_id) {
 		this.pizza_id = pizza_id;
 	}
 	/**
 	 * @return the pizza_id
 	 */
-	public String getPizza_id() {
+	public int getPizza_id() {
 		return pizza_id;
 	}
 	
