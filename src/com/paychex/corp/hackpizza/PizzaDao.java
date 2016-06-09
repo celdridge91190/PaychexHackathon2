@@ -128,6 +128,7 @@ public class PizzaDao {
 		return pizza;
 	}
 	
+	
 	/**
 	 * Get all pizza names from pizza table
 	 * @param conn connection to the database
@@ -152,6 +153,32 @@ public class PizzaDao {
 		}
 		return pizzaNames;
 	}
+	
+	/**
+	 * Get all topping names from topping table
+	 * @param conn connection to the database
+	 * @return all topping names in topping table
+	 * @throws SQLException
+	 */
+	public List<String> getToppingNames(Connection conn) throws SQLException {
+		List<String> toppingNames = new ArrayList<String>();
+		String toppingNamesSql = "Select topping_name from Hack2.topping";
+		PreparedStatement toppingNameStatement = null;
+		try {
+			toppingNameStatement = conn.prepareStatement(toppingNamesSql);
+			ResultSet results = toppingNameStatement.executeQuery();
+			while (results.next()){
+				String toppingName = results.getString("TOPPING_NAME");
+				toppingNames.add(toppingName);
+			}
+		} finally {
+			if (toppingNameStatement != null && !toppingNameStatement.isClosed()){
+				toppingNameStatement.close();
+			}
+		}
+		return toppingNames;
+	}
+	
 	
 	/**
 	 * Retreives all mappings from the Hack2.pizzaToppingMap table

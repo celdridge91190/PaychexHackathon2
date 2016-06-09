@@ -168,5 +168,32 @@ public class PizzaService {
 
 		return pizzaNames;
 	}
+	
+	@GET
+	@Path("/toppingNames")
+	// @Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> getToppingNames() throws Exception {
+		InitialContext ctx;
+		Connection conn = null;
+		List<String> toppingNames = null;
+		try {
+			ctx = new InitialContext();
+			DataSource ds = (DataSource) ctx.lookup("jdbc/HackPizza");
+			conn = ds.getConnection();
+			// Retrieve all topping objects from database
+			toppingNames = pizzaDao.getToppingNames(conn);
+			// For each topping, find the toppings that belong to that topping and add them to the
+			// pojo
+			
+			
+		} finally {
+			if (conn != null && !conn.isClosed()){
+				conn.close();
+			}
+		}
+
+		return toppingNames;
+	}
 
 }
