@@ -218,6 +218,8 @@ public class PizzaDao {
 			int pizzaId = 0;
 			int toppingId = 0;
 			getIdsStatement = conn.prepareStatement(getIdsSql);
+			getIdsStatement.setString(1,  pizzaName);
+			getIdsStatement.setString(2,  toppingName);
 			getIdsStatement.setMaxRows(1);
 			ResultSet results = getIdsStatement.executeQuery();
 			if (results.next()){
