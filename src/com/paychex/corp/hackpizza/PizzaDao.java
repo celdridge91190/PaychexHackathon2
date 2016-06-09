@@ -179,5 +179,39 @@ public class PizzaDao {
 		}
 		return mapping;
 	}
+	
+	public void addPizza(Connection conn, String pizzaName) throws SQLException {
+		String pizzaSql = "Insert into Hack2.pizza (pizza_name) value(?)";
+		PreparedStatement pizzaStatement = null;
+		try {
+			pizzaStatement = conn.prepareStatement(pizzaSql);
+			pizzaStatement.setString(1, pizzaName);
+			pizzaStatement.execute();
+		} finally {
+			if (pizzaStatement != null & !pizzaStatement.isClosed()){
+				pizzaStatement.close();
+			}
+		}
+	}
+	
+	public void addTopping(Connection conn, String toppingName) throws SQLException {
+		String toppingSql = "Insert into Hack2.topping (topping_name) value(?)";
+		PreparedStatement toppingStatement = null;
+		try {
+			toppingStatement = conn.prepareStatement(toppingSql);
+			toppingStatement.setString(1, toppingName);
+			toppingStatement.execute();
+		} finally {
+			if (toppingStatement != null & !toppingStatement.isClosed()){
+				toppingStatement.close();
+			}
+		}
+	}
+	
+	public void addToppingToPizza(Connection conn, String toppingName, String pizzaName) throws SQLException {
+		
+	}
+	
+	
 
 }
