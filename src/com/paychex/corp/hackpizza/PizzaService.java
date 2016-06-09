@@ -7,6 +7,7 @@ import java.util.List;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -70,6 +71,29 @@ public class PizzaService {
 			}
 		}
 		return pizza;
+	}
+	
+	@POST
+	@Path("/createPizza/{pizzaName}")
+	// @Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void createPizza(@PathParam("pizzaName") String pizzaName) throws Exception {
+		InitialContext ctx;
+		Connection conn = null;
+		
+		try {
+			ctx = new InitialContext();
+			DataSource ds = (DataSource) ctx.lookup("jdbc/HackPizza");
+			conn = ds.getConnection();
+			// Insert pizza object to database
+			pizzaDao.addPizza(conn, pizzaName);
+			
+		} finally {
+			if (conn != null && !conn.isClosed()){
+				conn.close();
+			}
+		}
+		
 	}
 	
 	@GET
